@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Egegpt Sohbet</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Yıldız hareketi */
+    body {
+      background: black;
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: white;
+      flex-direction: column;
+    }
+    .stars {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    .star {
+      position: absolute;
+      background: white;
+      width: 2px;
+      height: 2px;
+      opacity: 0.8;
+      animation: moveStar 5s linear infinite;
+    }
+    @keyframes moveStar {
+      0% {
+        transform: translateY(0);
+      }
+      100% {
+        transform: translateY(100vh);
+      }
+    }
+
+    /* Neon etkisi */
+    @keyframes neon {
+      0% {
+        color: #ff00ff;
+        text-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff, 0 0 15px #ff00ff, 0 0 20px #ff00ff, 0 0 25px #ff00ff, 0 0 30px #ff00ff, 0 0 35px #ff00ff;
+      }
+      50% {
+        color: #00ffff;
+        text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 15px #00ffff, 0 0 20px #00ffff, 0 0 25px #00ffff, 0 0 30px #00ffff, 0 0 35px #00ffff;
+      }
+      100% {
+        color: #ff00ff;
+        text-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff, 0 0 15px #ff00ff, 0 0 20px #ff00ff, 0 0 25px #ff00ff, 0 0 30px #ff00ff, 0 0 35px #ff00ff;
+      }
+    }
+
+    .neonText {
+      animation: neon 1.5s ease-in-out infinite;
+    }
+
+    /* Sohbet penceresi */
+    .chatContainer {
+      max-width: 100%;
+      width: 90vw;
+      height: 70vh;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+      overflow-y: auto;
+      margin-bottom: 20px;
+    }
+
+    .chatWindow {
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+
+    /* Mesaj stili */
+    .message {
+      padding: 12px;
+      border-radius: 15px;
+      margin-bottom: 10px;
+      background-color: rgba(255, 255, 255, 0.25);
+      color: white;
+    }
+
+    .user {
+      text-align: right;
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .ai {
+      text-align: left;
+      background-color: rgba(0, 255, 255, 0.2);
+    }
+
+    /* Yapımcı bilgisi dışta, alt kısımda */
+    .creator-info {
+      text-align: center;
+      font-size: 1rem;
+      color: white;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 8px;
+      border-radius: 10px;
+      position: fixed;
+      bottom: 10px;
+      width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      .chatContainer {
+        width: 90vw;
+        height: 65vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="stars"></div>
+
+  <div class="chatContainer">
+    <div class="text-center text-2xl font-bold neonText mb-4">Egegpt Sohbet</div>
+    <div id="chatWindow" class="chatWindow space-y-2 mb-4">
+      <!-- Mesajlar buraya gelecek -->
+    </div>
+    <div class="flex items-center space-x-2">
+      <input id="messageInput" type="text" placeholder="Mesajınızı yazın..." class="flex-1 p-2 bg-gray-800 text-white rounded-xl focus:outline-none">
+      <button id="sendMessage" class="bg-blue-500 text-white px-4 py-2 rounded-xl">Gönder</button>
+    </div>
+  </div>
+
+  <!-- Yapımcı Bilgisi sohbet çerçevesinin altında, sayfanın en alt kısmında -->
+  <div class="creator-info">
+    Yaratıcı: egebabapro912
+  </div>
+
+  <script>
+    const starContainer = document.querySelector('.stars');
+
+    // Yıldız sayısını kontrol etmek için mevcut yıldızları takip et
+    const maxStars = 100;
+
+    function createStar() {
+      if (starContainer.childElementCount < maxStars) {
+        const star = document.createElement('div');
+        star.classList.add('star');
+
+        // Corrected syntax for inline CSS
+        star.style.left = `${Math.random() * 100}vw`;  // Random position horizontally
+        star.style.top = `${Math.random() * -100}vh`;   // Random position starting from top
+        star.style.animationDuration = `${2 + Math.random() * 3}s`; // Random animation speed between 2s and 5s
+
+        starContainer.appendChild(star);
+
+        star.addEventListener('animationend', () => {
+          starContainer.removeChild(star);  // Remove star after animation ends
+        });
+      }
+    }
+
+    // Create a new star every 150 milliseconds
+    setInterval(createStar, 150);
+
+    // Mesaj gönderme mekanizması
+    document.getElementById('sendMessage').addEventListener('click', () => {
+      const input = document.getElementById('messageInput');
+      const userMessage = input.value.trim();
+
+      if (userMessage) {
+        addMessage(userMessage, 'user');
+        addMessage('Api yok kiral şuanlık', 'ai');
+        input.value = '';
+      }
+    });
+
+    function addMessage(text, sender) {
+      const messageContainer = document.createElement('div');
+      messageContainer.textContent = text;
+      messageContainer.classList.add('message');
+      if (sender === 'user') {
+        messageContainer.classList.add('user');
+      } else {
+        messageContainer.classList.add('ai');
+      }
+      document.querySelector('#chatWindow').appendChild(messageContainer);
+    }
+  </script>
+</body>
+</html>
